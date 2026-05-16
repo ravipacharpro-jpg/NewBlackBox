@@ -57,7 +57,9 @@ jobs:
           ./gradlew :Bcore:assembleRelease
 
       - name: Copy AAR to loader libs
-        run: cp NewBlackbox/Bcore/build/outputs/aar/Bcore-release.aar app/libs/Bcore-release.aar
+        run: |
+          mkdir -p app/libs
+          cp NewBlackbox/Bcore/build/outputs/aar/Bcore-release.aar app/libs/Bcore-release.aar
 
       - name: Build Loader APK (debug)
         run: ./gradlew :app:assembleDebug --stacktrace

@@ -1,6 +1,8 @@
 # Built application files
 *.apk
 *.aar
+# Keep pre-built library dependencies in app/libs
+!app/libs/*.aar
 *.ap_
 *.aab
 
