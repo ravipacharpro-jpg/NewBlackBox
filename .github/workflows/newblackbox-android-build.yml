@@ -42,25 +42,34 @@ jobs:
         run: |
           sdkmanager \
             "platform-tools" \
+            "platforms;android-35" \
             "platforms;android-34" \
             "build-tools;34.0.0" \
             "ndk;29.0.13846066" \
-            "ndk;24.0.8215888"
+            "ndk;24.0.8215888" \
+            "cmake;3.22.1"
 
       - name: Grant Gradle wrapper execute permission
         run: |
           chmod +x gradlew
           chmod +x NewBlackbox/gradlew
 
+      - name: Fix local.properties for CI
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "sdk.dir=$ANDROID_HOME" > NewBlackbox/local.properties
+
       - name: Build NewBlackbox Bcore AAR
         working-directory: NewBlackbox
         run: ./gradlew --no-daemon :Bcore:assembleRelease
 
       - name: Copy SDK AAR into loader
-        run: cp NewBlackbox/Bcore/build/outputs/aar/Bcore-release.aar app/libs/Bcore-release.aar
+        run: |
+          mkdir -p app/libs
+          cp NewBlackbox/Bcore/build/outputs/aar/Bcore-release.aar app/libs/Bcore-release.aar
 
       - name: Build Loader APK
-        run: ./gradlew --no-daemon :app:assembleDebug
+        run: ./gradlew --no-daemon :app:assembleDebug --stacktrace
 
       - name: Upload SDK AAR
         if: always()
