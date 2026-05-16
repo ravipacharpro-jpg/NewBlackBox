@@ -385,34 +385,39 @@ public class DownloadZip {
 
     private boolean downloadFile(String downloadUrl, DownloadCallback callback) {
         File outputZip = new File(context.getFilesDir(), ZIP_FILE_NAME);
-        try (InputStream input = new URL(downloadUrl).openStream();
-             OutputStream output = new FileOutputStream(outputZip)) {
-
-            HttpURLConnection connection = (HttpURLConnection) new URL(downloadUrl).openConnection();
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(downloadUrl).openConnection();
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
             connection.connect();
-            int lengthOfFile = connection.getContentLength();
-            
-            long totalBytes = lengthOfFile;
+
+            long totalBytes = connection.getContentLength();
             downloadedBytes = 0;
 
-            byte[] data = new byte[4096];
-            int count;
-            while ((count = input.read(data)) != -1) {
-                downloadedBytes += count;
-                int progress = (int) ((downloadedBytes * 100) / totalBytes);
-                
-                // Update progress
-                final int finalProgress = progress;
-                handler.post(() -> {
-                    if (downloadProgressBar != null && isDownloading) {
-                        updateDownloadProgress(finalProgress, "Downloading...", downloadedBytes, totalBytes);
-                    }
-                    if (callback != null) {
-                        callback.onProgress(finalProgress);
-                    }
-                });
-                
-                output.write(data, 0, count);
+            try (InputStream input = connection.getInputStream();
+                 OutputStream output = new FileOutputStream(outputZip)) {
+
+                byte[] data = new byte[4096];
+                int count;
+                while ((count = input.read(data)) != -1) {
+                    downloadedBytes += count;
+                    int progress = totalBytes > 0
+                            ? (int) ((downloadedBytes * 100) / totalBytes) : 0;
+
+                    final int finalProgress = progress;
+                    final long finalTotal = totalBytes;
+                    handler.post(() -> {
+                        if (downloadProgressBar != null && isDownloading) {
+                            updateDownloadProgress(finalProgress, "Downloading...", downloadedBytes, finalTotal);
+                        }
+                        if (callback != null) {
+                            callback.onProgress(finalProgress);
+                        }
+                    });
+
+                    output.write(data, 0, count);
+                }
             }
 
             return outputZip.exists();
@@ -420,6 +425,10 @@ public class DownloadZip {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 

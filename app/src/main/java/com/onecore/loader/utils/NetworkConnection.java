@@ -20,6 +20,11 @@ public class NetworkConnection {
         public void registerNetworkCallback() {
             try {
                 ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                // Check current connectivity before registering callback
+                Network activeNetwork = connectivityManager.getActiveNetwork();
+                BoxApplication.get().setInternetAvailable(activeNetwork != null);
+
                 NetworkRequest.Builder builder = new NetworkRequest.Builder();
                 connectivityManager.registerDefaultNetworkCallback(
                         new ConnectivityManager.NetworkCallback() {
@@ -38,7 +43,6 @@ public class NetworkConnection {
                                 }
                             }
                         });
-                BoxApplication.get().setInternetAvailable(false);
             } catch (Exception e) {
                 BoxApplication.get().setInternetAvailable(false);
             }
