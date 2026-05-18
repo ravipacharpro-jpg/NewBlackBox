@@ -36,17 +36,31 @@ public class CopyExecutor implements Executor {
             File origFile = new File(ps.pkg.baseCodePath);
             File newFile = BEnvironment.getBaseApkDir(ps.pkg.packageName);
             try {
+                boolean copiedToPrivate = true;
                 if (option.isFlag(InstallOption.FLAG_URI_FILE)) {
                     boolean b = FileUtils.renameTo(origFile, newFile);
                     if (!b) {
                         FileUtils.copyFile(origFile, newFile);
                     }
                 } else {
-                    FileUtils.copyFile(origFile, newFile);
+                    try {
+                        FileUtils.copyFile(origFile, newFile);
+                    } catch (IOException copyError) {
+                        if (ps.pkg.baseCodePath != null && ps.pkg.baseCodePath.startsWith("/data/app/")) {
+                            // Android 16+ may reject direct copy from /data/app for non-owning contexts.
+                            copiedToPrivate = false;
+                        } else {
+                            throw copyError;
+                        }
+                    }
                 }
-                newFile.setReadOnly();
-                // update baseCodePath
-                ps.pkg.baseCodePath = newFile.getAbsolutePath();
+                if (copiedToPrivate) {
+                    newFile.setReadOnly();
+                    // update baseCodePath
+                    ps.pkg.baseCodePath = newFile.getAbsolutePath();
+                } else {
+                    ps.pkg.baseCodePath = origFile.getAbsolutePath();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 return -1;

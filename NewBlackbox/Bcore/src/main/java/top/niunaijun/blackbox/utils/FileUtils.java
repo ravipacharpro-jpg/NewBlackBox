@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -225,6 +227,10 @@ public class FileUtils {
     public static void copyFile(InputStream inputStream, File target) {
         FileOutputStream outputStream = null;
         try {
+            File parent = target.getParentFile();
+            if (parent != null && !parent.exists()) {
+                mkdirs(parent);
+            }
             outputStream = new FileOutputStream(target);
             byte[] data = new byte[4096];
             int len;
@@ -241,6 +247,10 @@ public class FileUtils {
     }
 
     public static void copyFile(File source, File target) throws IOException {
+        File parent = target.getParentFile();
+        if (parent != null && !parent.exists()) {
+            mkdirs(parent);
+        }
         FileInputStream inputStream = null;
         FileOutputStream outputStream = null;
         try {
@@ -249,16 +259,26 @@ public class FileUtils {
             FileChannel iChannel = inputStream.getChannel();
             FileChannel oChannel = outputStream.getChannel();
 
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(8192);
             while (true) {
                 buffer.clear();
                 int r = iChannel.read(buffer);
                 if (r == -1)
                     break;
-                buffer.limit(buffer.position());
-                buffer.position(0);
+                buffer.flip();
                 oChannel.write(buffer);
             }
+            return;
+        } catch (IOException e) {
+            if (target.exists()) {
+                deleteDir(target);
+            }
+            try {
+                Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                return;
+            } catch (Throwable ignored) {
+            }
+            throw e;
         } finally {
             closeQuietly(inputStream);
             closeQuietly(outputStream);
