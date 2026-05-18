@@ -1,4 +1,4 @@
-# ★彡 [ ↻ ONECORE ENGINE ↺ ] 彡★
+# onecore Loader
 
 🔥 **Android Virtual Injector (Non-Root)** 🔥  
 An advanced injector to inject games and apps via Virtual Space without rooting your Android device.
