@@ -138,6 +138,8 @@ public class IOCore {
                 File sdcardAndroidFile = new File(android.os.Environment.getExternalStorageDirectory(), "Android");
                 String sdcardPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
                 String androidDir = String.format("/storage/emulated/%d/Android", systemUserId);
+                String androidDirUser0 = "/storage/emulated/0/Android";
+                String androidDirPrimary = "/storage/self/primary/Android";
                 if (!sdcardAndroidFile.exists()) {
                     sdcardAndroidFile = new File(androidDir);
                 }
@@ -163,8 +165,13 @@ public class IOCore {
                 }
                 rule.put(sdcardPath + "/Android/obb", external.getAbsolutePath() + "/Android/obb");
                 rule.put(androidDir + "/obb", external.getAbsolutePath() + "/Android/obb");
+                rule.put(androidDirUser0 + "/obb", external.getAbsolutePath() + "/Android/obb");
+                rule.put(androidDirPrimary + "/obb", external.getAbsolutePath() + "/Android/obb");
+
                 rule.put(sdcardPath + "/Android/data", external.getAbsolutePath() + "/Android/data");
                 rule.put(androidDir + "/data", external.getAbsolutePath() + "/Android/data");
+                rule.put(androidDirUser0 + "/data", external.getAbsolutePath() + "/Android/data");
+                rule.put(androidDirPrimary + "/data", external.getAbsolutePath() + "/Android/data");
 
                 blackRule.add(sdcardPath + "/Pictures");
                 blackRule.add(String.format("/storage/emulated/%d/Pictures", systemUserId));
