@@ -5,6 +5,13 @@ import android.content.Context;
 import top.niunaijun.blackbox.utils.Slog;
 
 public class SdkProtectionManager {
+    static {
+        try {
+            System.loadLibrary("sdk_protection");
+        } catch (Throwable ignored) {
+        }
+    }
+
     private static final String TAG = "SdkProtectionManager";
 
     private static final String[] SECURITY_SDK_LIBS = {
