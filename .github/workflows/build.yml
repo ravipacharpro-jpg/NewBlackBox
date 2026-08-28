@@ -1,26 +1,25 @@
-name: Build NewBlackBox AAR & Loader APK
+name: NyxBox Android Build
 
 on:
   push:
-    branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
+          cache: gradle
 
-      - name: Setup Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Accept SDK licenses
@@ -28,50 +27,40 @@ jobs:
 
       - name: Install Android SDK components
         run: |
-          sdkmanager --install "platforms;android-35" "platforms;android-34" "build-tools;34.0.0"
-          sdkmanager --install "ndk;29.0.13846066" "ndk;24.0.8215888"
-          sdkmanager --install "cmake;3.22.1"
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-35" \
+            "platforms;android-34" \
+            "build-tools;34.0.0" \
+            "ndk;29.0.13846066" \
+            "cmake;3.22.1"
 
       - name: Make gradlew executable
-        run: chmod +x gradlew
+        run: chmod +x NyxBox/gradlew
 
       - name: Fix local.properties for CI
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "sdk.dir=$ANDROID_HOME" > NewBlackbox/local.properties
+          export ANDROID_HOME=${ANDROID_HOME:-$HOME/Android/Sdk}
+          echo "sdk.dir=$ANDROID_HOME" > NyxBox/local.properties
 
-      - name: Build NewBlackBox AAR
-        working-directory: NewBlackbox
-        run: |
-          chmod +x gradlew
-          ./gradlew :Bcore:assembleRelease
+      - name: Build NyxBox Bcore AAR (release)
+        working-directory: NyxBox
+        run: ./gradlew --no-daemon :core:assembleRelease
 
-      - name: Copy AAR to loader libs
-        run: |
-          mkdir -p app/libs
-          cp NewBlackbox/Bcore/build/outputs/aar/Bcore-release.aar app/libs/Bcore-release.aar
+      - name: Build NyxBox Loader APK (debug)
+        working-directory: NyxBox
+        run: ./gradlew --no-daemon :app:assembleDebug --stacktrace
 
-      - name: Build Loader APK (debug)
-        run: ./gradlew :app:assembleDebug --stacktrace
-
-      - name: Upload AAR artifact
+      - name: Upload SDK AAR
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bcore-release-aar
-          path: NewBlackbox/Bcore/build/outputs/aar/Bcore-release.aar
+          name: nyxbox-core-aar
+          path: NyxBox/core/build/outputs/aar/*.aar
 
-      - name: Upload APK artifact
+      - name: Upload Loader APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: loader-apk-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: nyxbox-loader-debug-apk
+          path: NyxBox/app/build/outputs/apk/debug/*.apk

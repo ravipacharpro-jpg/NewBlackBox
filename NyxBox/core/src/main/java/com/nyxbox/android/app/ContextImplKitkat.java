@@ -1,0 +1,21 @@
+package com.nyxbox.android.app;
+
+import java.io.File;
+
+import com.nyxbox.reflection.annotation.BClassName;
+import com.nyxbox.reflection.annotation.BField;
+
+@BClassName("android.app.ContextImpl")
+public interface ContextImplKitkat {
+    @BField
+    Object mDisplayAdjustments();
+
+    @BField
+    File[] mExternalCacheDirs();
+
+    @BField
+    File[] mExternalFilesDirs();
+
+    @BField
+    String mOpPackageName();
+}

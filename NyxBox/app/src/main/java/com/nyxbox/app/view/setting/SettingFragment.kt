@@ -1,0 +1,111 @@
+package com.nyxbox.app.view.setting
+
+import android.os.Bundle
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import com.nyxbox.NyxBoxCore
+import com.nyxbox.app.R
+import com.nyxbox.app.app.AppManager
+import com.nyxbox.app.util.toast
+import com.nyxbox.app.view.gms.GmsManagerActivity
+
+class SettingFragment : PreferenceFragmentCompat() {
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.setting, rootKey)
+
+        initGms()
+
+        invalidHideState {
+            val rootHidePreference: Preference = (findPreference("root_hide")!!)
+            val hideRoot = AppManager.mNyxBoxLoader.hideRoot()
+            rootHidePreference.setDefaultValue(hideRoot)
+            rootHidePreference
+        }
+
+        invalidHideState {
+            val daemonPreference: Preference = (findPreference("daemon_enable")!!)
+            val mDaemonEnable = AppManager.mNyxBoxLoader.daemonEnable()
+            daemonPreference.setDefaultValue(mDaemonEnable)
+            daemonPreference
+        }
+
+        invalidHideState {
+            val vpnPreference: Preference = (findPreference("use_vpn_network")!!)
+            val mUseVpnNetwork = AppManager.mNyxBoxLoader.useVpnNetwork()
+            vpnPreference.setDefaultValue(mUseVpnNetwork)
+            vpnPreference
+        }
+
+        invalidHideState {
+            val disableFlagSecurePreference: Preference = (findPreference("disable_flag_secure")!!)
+            val mDisableFlagSecure = AppManager.mNyxBoxLoader.disableFlagSecure()
+            disableFlagSecurePreference.setDefaultValue(mDisableFlagSecure)
+            disableFlagSecurePreference
+        }
+
+        initSendLogs()
+    }
+
+    private fun initGms() {
+        val gmsManagerPreference: Preference = (findPreference("gms_manager")!!)
+
+        if (NyxBoxCore.get().isSupportGms) {
+
+            gmsManagerPreference.setOnPreferenceClickListener {
+                GmsManagerActivity.start(requireContext())
+                true
+            }
+        } else {
+            gmsManagerPreference.summary = getString(R.string.no_gms)
+            gmsManagerPreference.isEnabled = false
+        }
+    }
+
+    private fun invalidHideState(block: () -> Preference) {
+        val pref = block()
+        pref.setOnPreferenceChangeListener { preference, newValue ->
+            val tmpHide = (newValue == true)
+            when (preference.key) {
+                "root_hide" -> {
+
+                    AppManager.mNyxBoxLoader.invalidHideRoot(tmpHide)
+                }
+                "daemon_enable" -> {
+                    AppManager.mNyxBoxLoader.invalidDaemonEnable(tmpHide)
+                }
+                "use_vpn_network" -> {
+                    AppManager.mNyxBoxLoader.invalidUseVpnNetwork(tmpHide)
+                }
+                "disable_flag_secure" -> {
+                    AppManager.mNyxBoxLoader.invalidDisableFlagSecure(tmpHide)
+                }
+            }
+
+            toast(R.string.restart_module)
+            return@setOnPreferenceChangeListener true
+        }
+    }
+    private fun initSendLogs() {
+        val sendLogsPreference: Preference? = findPreference("send_logs")
+        sendLogsPreference?.setOnPreferenceClickListener {
+            it.isEnabled = false
+            NyxBoxCore.get()
+                    .sendLogs(
+                            "Manual Log Upload from Settings",
+                            true,
+                            object : NyxBoxCore.LogSendListener {
+                                override fun onSuccess() {
+                                    activity?.runOnUiThread { sendLogsPreference.isEnabled = true }
+                                }
+
+                                override fun onFailure(error: String?) {
+                                    activity?.runOnUiThread { sendLogsPreference.isEnabled = true }
+                                }
+                            }
+                    )
+            toast("Sending logs... (Check notifications for status)")
+            true
+        }
+    }
+}
