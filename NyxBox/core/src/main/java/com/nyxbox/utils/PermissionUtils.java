@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.nyxbox.BlackBoxCore;
+import com.nyxbox.NyxBoxCore;
 import com.nyxbox.app.RequestPermissionsActivity;
 import com.nyxbox.core.system.am.IRequestPermissionsResult;
 import com.nyxbox.utils.compat.BuildCompat;
@@ -88,7 +88,7 @@ public class PermissionUtils {
     }};
 
     public static boolean isCheckPermissionRequired(ApplicationInfo info) {
-        if (BuildCompat.isM() || BlackBoxCore.getContext().getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.M) {
+        if (BuildCompat.isM() || NyxBoxCore.getContext().getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.M) {
             return false;
         }
         return info.targetSdkVersion < Build.VERSION_CODES.M;
@@ -115,7 +115,7 @@ public class PermissionUtils {
         }
 
         for (String permission : permissions) {
-            if (!BlackBoxCore.get().checkSelfPermission(permission)) {
+            if (!NyxBoxCore.get().checkSelfPermission(permission)) {
                 return false;
             }
         }

@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.nyxbox.BlackBoxCore;
+import com.nyxbox.NyxBoxCore;
 
 /**
  * Created by @RIYAZXERO on 3/2/21.
@@ -33,7 +33,7 @@ public class AbiUtils {
             return true;
         }
 
-        if (BlackBoxCore.is64Bit()) {
+        if (NyxBoxCore.is64Bit()) {
             return abiUtils.is64Bit();
         } else {
             return abiUtils.is32Bit();

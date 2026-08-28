@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.Objects;
 
 import com.nyxbox.app.BActivityThread;
-import com.nyxbox.core.RCore;
 
 import static android.content.pm.ActivityInfo.LAUNCH_SINGLE_INSTANCE;
 

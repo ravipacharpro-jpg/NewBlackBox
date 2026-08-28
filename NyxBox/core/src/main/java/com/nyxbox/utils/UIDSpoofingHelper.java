@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Process;
 
-import com.nyxbox.BlackBoxCore;
+import com.nyxbox.NyxBoxCore;
 import com.nyxbox.app.BActivityThread;
 import com.nyxbox.utils.Slog;
 
@@ -35,7 +35,7 @@ public class UIDSpoofingHelper {
      */
     public static int getPackageUID(String packageName) {
         try {
-            Context context = BlackBoxCore.getContext();
+            Context context = NyxBoxCore.getContext();
             if (context != null) {
                 // Try to get the real UID for the package
                 PackageManager pm = context.getPackageManager();

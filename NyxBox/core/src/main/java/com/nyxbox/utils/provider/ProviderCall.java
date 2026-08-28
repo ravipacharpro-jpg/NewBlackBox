@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import java.io.Serializable;
-import com.nyxbox.BlackBoxCore;
+import com.nyxbox.NyxBoxCore;
 import com.nyxbox.utils.compat.ContentProviderCompat;
 
 public class ProviderCall {
@@ -25,7 +25,7 @@ public class ProviderCall {
 
     public static Bundle callSafely(String authority, String methodName, String arg, Bundle bundle) {
         try {
-            Bundle result = call(authority, BlackBoxCore.getContext(), methodName, arg, bundle, 5);
+            Bundle result = call(authority, NyxBoxCore.getContext(), methodName, arg, bundle, 5);
             return result != null ? result : new Bundle();
         } catch (Exception e) {
             Log.e(TAG, "Safe call failed: " + authority);

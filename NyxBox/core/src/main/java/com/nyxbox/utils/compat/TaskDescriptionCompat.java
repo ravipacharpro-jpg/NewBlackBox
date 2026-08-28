@@ -9,7 +9,7 @@ import android.graphics.drawable.Drawable;
 
 import java.util.Locale;
 
-import com.nyxbox.BlackBoxCore;
+import com.nyxbox.NyxBoxCore;
 import com.nyxbox.app.BActivityThread;
 import com.nyxbox.utils.DrawableUtils;
 
@@ -26,7 +26,7 @@ public class TaskDescriptionCompat {
         if (drawable == null)
             return td;
 
-        ActivityManager am = (ActivityManager) BlackBoxCore.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) NyxBoxCore.getContext().getSystemService(Context.ACTIVITY_SERVICE);
         int iconSize = am.getLauncherLargeIconSize();
         icon = DrawableUtils.drawableToBitmap(drawable, iconSize, iconSize);
         td = new ActivityManager.TaskDescription(label, icon, td.getPrimaryColor());
@@ -39,7 +39,7 @@ public class TaskDescriptionCompat {
 
     private static CharSequence getApplicationLabel() {
         try {
-            PackageManager pm = BlackBoxCore.getPackageManager();
+            PackageManager pm = NyxBoxCore.getPackageManager();
             return pm.getApplicationLabel(pm.getApplicationInfo(BActivityThread.getAppPackageName(), 0));
         } catch (PackageManager.NameNotFoundException e) {
             return null;
@@ -48,7 +48,7 @@ public class TaskDescriptionCompat {
 
     private static Drawable getApplicationIcon() {
 		try {
-			PackageManager pm = BlackBoxCore.getContext().getPackageManager();
+			PackageManager pm = NyxBoxCore.getContext().getPackageManager();
 			ApplicationInfo appInfo = pm.getApplicationInfo(BActivityThread.getAppPackageName(), 0);
 			return pm.getApplicationIcon(appInfo);
 		} catch (Exception e) {
