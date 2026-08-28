@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ComponentInfo;
 import android.content.pm.ProviderInfo;
+import android.net.Uri;
+import android.text.TextUtils;
 
+import java.io.File;
 import java.util.Objects;
 
-import com.nyxbox.NyxBoxCore;
 import com.nyxbox.app.BActivityThread;
+import com.nyxbox.core.RCore;
 
 import static android.content.pm.ActivityInfo.LAUNCH_SINGLE_INSTANCE;
 
@@ -21,8 +24,8 @@ public class ComponentUtils {
 
     public static boolean isSelf(Intent intent) {
         ComponentName component = intent.getComponent();
-        if (component == null || NyxBoxCore.getAppPackageName() == null) return false;
-        return component.getPackageName().equals(NyxBoxCore.getAppPackageName());
+        if (component == null || BActivityThread.getAppPackageName() == null) return false;
+        return component.getPackageName().equals(BActivityThread.getAppPackageName());
     }
 
     public static boolean isSelf(Intent[] intent) {
@@ -93,6 +96,7 @@ public class ComponentUtils {
         }
         return processName;
     }
+
 
     public static boolean isSameComponent(ComponentInfo first, ComponentInfo second) {
 

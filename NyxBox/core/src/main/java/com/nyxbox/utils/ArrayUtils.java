@@ -36,7 +36,10 @@ public class ArrayUtils {
 		return false;
 	}
 
-	
+	/**
+	 * Return first index of {@code value} in {@code array}, or {@code -1} if
+	 * not found.
+	 */
 	public static <T> int indexOf(T[] array, T value) {
 		if (array == null) return -1;
 		for (int i = 0; i < array.length; i++) {
@@ -133,7 +136,15 @@ public class ArrayUtils {
 		}
 		return null;
 	}
+    
+    public static int[] toInt(Integer[] array) {
+		int[] newArray = new int[array.length];
 
+		for (int i = 0; i < array.length; i++) {
+			newArray[i] = array[i];
+		}
+		return newArray;
+	}
 
 	public static void checkOffsetAndCount(int arrayLength, int offset, int count) throws ArrayIndexOutOfBoundsException {
 		if ((offset | count) < 0 || offset > arrayLength || arrayLength - offset < count) {

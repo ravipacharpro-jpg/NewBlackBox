@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.nyxbox.NyxBoxCore;
+import com.nyxbox.BlackBoxCore;
 
 /**
- * Created by Milk on 3/2/21.
+ * Created by @RIYAZXERO on 3/2/21.
  * * ∧＿∧
  * (`･ω･∥
  * 丶　つ０
@@ -33,7 +33,7 @@ public class AbiUtils {
             return true;
         }
 
-        if (NyxBoxCore.is64Bit()) {
+        if (BlackBoxCore.is64Bit()) {
             return abiUtils.is64Bit();
         } else {
             return abiUtils.is32Bit();

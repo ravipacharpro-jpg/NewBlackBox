@@ -1,17 +1,13 @@
 package com.nyxbox.utils;
 
 public class HackAppUtils {
-
-    
     public static void enableQQLogOutput(String packageName, ClassLoader classLoader) {
         if ("com.tencent.mobileqq".equals(packageName)) {
             try {
-                Reflector.on("com.tencent.qphone.base.util.QLog", true, classLoader)
-                        .field("UIN_REPORTLOG_LEVEL")
-                        .set(100);
+                Reflector.on("com.tencent.qphone.base.util.QLog", true, classLoader).field("UIN_REPORTLOG_LEVEL").set(100);
             } catch (Exception e) {
                 e.printStackTrace();
-                
+                // ignore
             }
         }
     }

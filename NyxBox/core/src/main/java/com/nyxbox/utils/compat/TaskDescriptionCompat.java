@@ -2,13 +2,14 @@ package com.nyxbox.utils.compat;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import java.util.Locale;
 
-import com.nyxbox.NyxBoxCore;
+import com.nyxbox.BlackBoxCore;
 import com.nyxbox.app.BActivityThread;
 import com.nyxbox.utils.DrawableUtils;
 
@@ -20,38 +21,39 @@ public class TaskDescriptionCompat {
         if (label != null && icon != null)
             return td;
 
-        label = getTaskDescriptionLabel(NyxBoxCore.getUserId(), getApplicationLabel());
-        
-        
-        
-        
+        label = getTaskDescriptionLabel(BActivityThread.getUserId(), getApplicationLabel());
+        Drawable drawable = getApplicationIcon();
+        if (drawable == null)
+            return td;
 
-        
-        
-        
-        td = new ActivityManager.TaskDescription(label, null, td.getPrimaryColor());
+        ActivityManager am = (ActivityManager) BlackBoxCore.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        int iconSize = am.getLauncherLargeIconSize();
+        icon = DrawableUtils.drawableToBitmap(drawable, iconSize, iconSize);
+        td = new ActivityManager.TaskDescription(label, icon, td.getPrimaryColor());
         return td;
     }
 
     public static String getTaskDescriptionLabel(int userId, CharSequence label) {
-        return String.format(Locale.CHINA, "[B%d]%s", userId, label);
+        return String.format(Locale.CHINA, "%s", label);
     }
 
     private static CharSequence getApplicationLabel() {
         try {
-            PackageManager pm = NyxBoxCore.getPackageManager();
-            return pm.getApplicationLabel(pm.getApplicationInfo(NyxBoxCore.getAppPackageName(), 0));
+            PackageManager pm = BlackBoxCore.getPackageManager();
+            return pm.getApplicationLabel(pm.getApplicationInfo(BActivityThread.getAppPackageName(), 0));
         } catch (PackageManager.NameNotFoundException e) {
             return null;
         }
     }
 
     private static Drawable getApplicationIcon() {
-        try {
-            
-            return null;
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
+		try {
+			PackageManager pm = BlackBoxCore.getContext().getPackageManager();
+			ApplicationInfo appInfo = pm.getApplicationInfo(BActivityThread.getAppPackageName(), 0);
+			return pm.getApplicationIcon(appInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

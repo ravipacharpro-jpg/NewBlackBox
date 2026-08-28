@@ -1,6 +1,7 @@
 package com.nyxbox.utils.compat;
 
 import android.os.Build;
+import android.view.Surface;
 
 public class BuildCompat {
 
@@ -14,83 +15,86 @@ public class BuildCompat {
         }
         return 0;
     }
-
-    // Android 16 (Android 15) - 'Red Velvet Cake' (Expected version for Android 15)
-    public static boolean isV() {
+    
+    
+    // 16
+    public static boolean isBaklava() {
+        return Build.VERSION.SDK_INT >= 36 || (Build.VERSION.SDK_INT >= 35 && Build.VERSION.PREVIEW_SDK_INT == 1);
+    }
+    
+    // 15
+    public static boolean isVanillaIceCream() {
         return Build.VERSION.SDK_INT >= 35 || (Build.VERSION.SDK_INT >= 34 && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
     
-    //Android 15 (Android 14) - 'Upside Down Cake' (Expected version for Android 14)
-    public static boolean isU() {
+    // 14
+    public static boolean isUpsideDownCake() {
         return Build.VERSION.SDK_INT >= 34 || (Build.VERSION.SDK_INT >= 33 && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
-
-    // Android 13 (Tiramisu)
-	public static boolean isT() {
-		return Build.VERSION.SDK_INT >= 33 || (Build.VERSION.SDK_INT >= 31 && Build.VERSION.PREVIEW_SDK_INT == 1);
-	}
+    
+    // 13
+    public static boolean isT() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.PREVIEW_SDK_INT == 1);
+    }
+    
+    // 12.1
+    public static boolean isS_V2() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2 || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.PREVIEW_SDK_INT == 1);
+    }
 
     // 12
     public static boolean isS() {
-        return Build.VERSION.SDK_INT >= 31 || (Build.VERSION.SDK_INT >= 30 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
 
     // 11
     public static boolean isR() {
-        return Build.VERSION.SDK_INT >= 30 || (Build.VERSION.SDK_INT >= 29 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
 
     // 10
     public static boolean isQ() {
-        return Build.VERSION.SDK_INT >= 29 || (Build.VERSION.SDK_INT >= 28 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
 
     // 9
     public static boolean isPie() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P || (Build.VERSION.SDK_INT >= 27 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
-
+    
+    // 8.1
+    public static boolean isOreo_MR1() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.PREVIEW_SDK_INT == 1);
+    }
+    
     // 8
     public static boolean isOreo() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || (Build.VERSION.SDK_INT >= 25 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
 
     // 7.1
     public static boolean isN_MR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 || (Build.VERSION.SDK_INT >= 24 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
 
     // 7
     public static boolean isN() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || (Build.VERSION.SDK_INT >= 23 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
 
     // 6
     public static boolean isM() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
+    
+    public static boolean isLollipop_MR1() {
+        return Build.VERSION.SDK_INT >= 22;
+    }
 
     // 5
     public static boolean isL() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
-
-    // ========== ADDED METHODS FOR BActivityThread ==========
-    /**
-     * Nougat (Android 7.0, API 24) and above.
-     */
-    public static boolean isNougat() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-    }
-
-    /**
-     * Snow Cone (Android 12, API 31) and above.
-     * This is an alias for {@link #isS()}.
-     */
-    public static boolean isSnowCone() {
-        return isS();
-    }
-    // ======================================================
 
     public static boolean isSamsung() {
         return "samsung".equalsIgnoreCase(Build.BRAND) || "samsung".equalsIgnoreCase(Build.MANUFACTURER);

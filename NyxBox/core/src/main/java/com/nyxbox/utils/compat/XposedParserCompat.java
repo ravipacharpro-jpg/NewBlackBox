@@ -11,12 +11,12 @@ import java.io.InputStreamReader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.nyxbox.NyxBoxCore;
+import com.nyxbox.BlackBoxCore;
 import com.nyxbox.entity.pm.InstalledModule;
 import com.nyxbox.utils.CloseUtils;
 
 /**
- * Created by Milk on 5/2/21.
+ * Created by @RIYAZXERO on 5/2/21.
  * * ∧＿∧
  * (`･ω･∥
  * 丶　つ０
@@ -27,7 +27,7 @@ public class XposedParserCompat {
 
     public static InstalledModule parseModule(ApplicationInfo applicationInfo) {
         try {
-            PackageManager packageManager = NyxBoxCore.getPackageManager();
+            PackageManager packageManager = BlackBoxCore.getPackageManager();
             InstalledModule module = new InstalledModule();
             module.packageName = applicationInfo.packageName;
             module.enable = false;
