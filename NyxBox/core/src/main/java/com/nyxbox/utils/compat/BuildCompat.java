@@ -31,7 +31,12 @@ public class BuildCompat {
     public static boolean isUpsideDownCake() {
         return Build.VERSION.SDK_INT >= 34 || (Build.VERSION.SDK_INT >= 33 && Build.VERSION.PREVIEW_SDK_INT == 1);
     }
-    
+
+    // Alias kept for NyxBox core API compatibility (Android 14 / UpsideDownCake)
+    public static boolean isU() {
+        return Build.VERSION.SDK_INT >= 34 || (Build.VERSION.SDK_INT >= 33 && Build.VERSION.PREVIEW_SDK_INT == 1);
+    }
+
     // 13
     public static boolean isT() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.PREVIEW_SDK_INT == 1);
