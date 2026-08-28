@@ -80,6 +80,24 @@ public class SimpleCrashFix {
                     }
 
                     
+                    if (isBinderCrash(throwable)) {
+                        Slog.w(TAG, "Caught Binder crash, preventing crash: " + throwable.getMessage());
+                        try { NyxBoxCore.get().sendLogs("CRASH DETECTED (Caught/Binder): " + throwable.getMessage(), true); } catch (Throwable ignored) {}
+                        return;
+                    }
+
+                    if (isParcelCrash(throwable)) {
+                        Slog.w(TAG, "Caught Parcel crash, preventing crash: " + throwable.getMessage());
+                        try { NyxBoxCore.get().sendLogs("CRASH DETECTED (Caught/Parcel): " + throwable.getMessage(), true); } catch (Throwable ignored) {}
+                        return;
+                    }
+
+                    if (isResourceCrash(throwable)) {
+                        Slog.w(TAG, "Caught Resources crash, preventing crash: " + throwable.getMessage());
+                        try { NyxBoxCore.get().sendLogs("CRASH DETECTED (Caught/Resource): " + throwable.getMessage(), true); } catch (Throwable ignored) {}
+                        return;
+                    }
+
                     Slog.e(TAG, "Fatal crash detected, attempting to report before death...");
                     try {
                          NyxBoxCore.get().sendLogs("FATAL CRASH (Uncaught): " + throwable.getMessage(), false);
@@ -282,5 +300,39 @@ public class SimpleCrashFix {
         }
         
         return false;
+    }
+
+    private static boolean isBinderCrash(Throwable throwable) {
+        if (throwable == null) return false;
+        if (throwable instanceof android.os.DeadObjectException) return true;
+        if (throwable instanceof android.os.TransactionTooLargeException) return true;
+        String message = throwable.getMessage();
+        if (message != null && (message.contains("Binder") || message.contains("TransactionTooLarge") || message.contains("DeadObject"))) {
+            return true;
+        }
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        if (stackTrace != null) {
+            for (StackTraceElement element : stackTrace) {
+                String className = element.getClassName();
+                if (className.startsWith("android.os.Binder") || className.startsWith("android.os.Parcel")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isParcelCrash(Throwable throwable) {
+        if (throwable == null) return false;
+        if (throwable instanceof android.os.BadParcelableException) return true;
+        String message = throwable.getMessage();
+        return message != null && message.contains("BadParcelable");
+    }
+
+    private static boolean isResourceCrash(Throwable throwable) {
+        if (throwable == null) return false;
+        if (throwable instanceof android.content.res.Resources.NotFoundException) return true;
+        String message = throwable.getMessage();
+        return message != null && message.contains("Resource") && (message.contains("Not Found") || message.contains("NotFoundException"));
     }
 }
