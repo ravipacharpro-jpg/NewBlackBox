@@ -9,6 +9,8 @@
 #include <Hook/BinderHook.h>
 #include <Hook/DexFileHook.h>
 #include <Hook/RuntimeHook.h>
+#include <Hook/SystemPropertiesHook.h>
+#include <Hook/LinuxHook.h>
 #include "Utils/HexDump.h"
 #include "hidden_api.h"
 
@@ -103,6 +105,13 @@ void init(JNIEnv *env, jobject clazz, jint api_level) {
     VMEnv.loadEmptyDex = env->GetStaticMethodID(VMEnv.NativeCoreClass, "loadEmptyDex",
                                                 "()[J");
     JniHook::InitJniHook(env, api_level);
+    // Riyaz engine features: SystemProperties + Linux hook chains (install once)
+    static bool riyazHooksInstalled = false;
+    if (!riyazHooksInstalled) {
+        riyazHooksInstalled = true;
+        SystemPropertiesHook::init(env);
+        LinuxHook::init(env);
+    }
 }
 
 void addIORule(JNIEnv *env, jclass clazz, jstring target_path,
@@ -238,6 +247,15 @@ static JNINativeMethod gMethods[] = {
         {"init",       "(I)V",                                    (void *) init},
 };
 
+// RNative (Riyaz) native glue — mirrors NativeCore, exposed under com.nyxbox.core.RNative
+#define RNATIVE_CLASS "com/nyxbox/core/RNative"
+static JNINativeMethod gMethodsRNative[] = {
+        {"init",       "(I)V",                                    (void *) init},
+        {"enableIO",   "()V",                                     (void *) enableIO},
+        {"addIORule",  "(Ljava/lang/String;Ljava/lang/String;)V", (void *) addIORule},
+        {"hideXposed", "()V",                                     (void *) hideXposed},
+};
+
 int registerNativeMethods(JNIEnv *env, const char *className,
                           JNINativeMethod *gMethods, int numMethods) {
     jclass clazz;
@@ -254,6 +272,9 @@ int registerNativeMethods(JNIEnv *env, const char *className,
 int registerNatives(JNIEnv *env) {
     if (!registerNativeMethods(env, VMCORE_CLASS, gMethods,
                                sizeof(gMethods) / sizeof(gMethods[0])))
+        return JNI_FALSE;
+    if (!registerNativeMethods(env, RNATIVE_CLASS, gMethodsRNative,
+                               sizeof(gMethodsRNative) / sizeof(gMethodsRNative[0])))
         return JNI_FALSE;
     return JNI_TRUE;
 }

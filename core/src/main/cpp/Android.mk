@@ -43,6 +43,8 @@ Hook/VMClassLoaderHook.cpp \
 Hook/UnixFileSystemHook.cpp \
 Hook/BinderHook.cpp \
 Hook/BaseHook.cpp \
+Hook/SystemPropertiesHook.cpp \
+Hook/LinuxHook.cpp \
 JniHook/JniHook.cpp \
 oxorany/Tools.cpp \
 Substrate/hde64.c \

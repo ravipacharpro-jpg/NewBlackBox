@@ -1,0 +1,61 @@
+package com.nyxbox.core;
+
+import android.os.Binder;
+import android.os.Build;
+import android.os.Process;
+import android.util.Log;
+import androidx.annotation.Keep;
+import android.content.Context;
+import java.io.File;
+import java.util.List;
+import dalvik.system.DexFile;
+import com.nyxbox.NyxBoxCore;
+import com.nyxbox.app.BActivityThread;
+import com.nyxbox.utils.compat.DexFileCompat;
+
+public class RNative {
+    
+    public static final String TAG = "RNative";
+    private static boolean isInjected = false;
+    public static String libtarget = "libbgmi.so";
+
+    static {
+        System.loadLibrary("blackbox");
+        File file = new File(NyxBoxCore.getContext().getFilesDir(), "loader/" + libtarget);
+        if (file.exists()) {
+            System.load(file.getAbsolutePath());
+        }
+    }
+
+    public static native void init(int apiLevel);
+    public static native void enableIO();
+    public static native void addIORule(String targetPath, String relocatePath);
+    public static native void hideXposed();
+    
+    @Keep
+    public static int getCallingUid(int origCallingUid) {
+        if (origCallingUid > 0 && origCallingUid < Process.FIRST_APPLICATION_UID) return origCallingUid;
+        if (origCallingUid > Process.LAST_APPLICATION_UID) return origCallingUid;
+        if (origCallingUid == NyxBoxCore.getHostUid()) {
+            if(BActivityThread.getAppPackageName().equals("com.google.android.gms")){
+                return Process.ROOT_UID;
+            }
+            if(BActivityThread.getAppPackageName().equals("com.google.android.webview")){
+                return Process.myUid();
+            }
+            return BActivityThread.getCallingBUid();
+        }
+        return origCallingUid;
+    }
+
+    @Keep
+    public static String redirectPath(String path) {
+        return RCore.get().redirectPath(path);
+    }
+
+    @Keep
+    public static File redirectPath(File path) {
+        return RCore.get().redirectPath(path);
+    }
+
+}
