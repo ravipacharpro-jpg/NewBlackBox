@@ -117,7 +117,7 @@ public class RCore {
             rule.put(String.format("/data/user/%d/%s", systemUserId, packageName), packageInfo.dataDir);
 
             // Ensure ART profile directories exist and redirect both current and reference profiles
-            File profilesRoot = new File(BEnvironment.getVBoxRoot(), "profiles");
+            File profilesRoot = new File(BEnvironment.getVirtualRoot(), "profiles");
             FileUtils.mkdirs(profilesRoot.getAbsolutePath());
             // broad redirect as a safety net
             rule.put("/data/misc/profiles", profilesRoot.getAbsolutePath());
@@ -130,7 +130,7 @@ public class RCore {
             rule.put(String.format("/data/misc/profiles/ref/%d/%s", BActivityThread.getUserId(), packageName), profilesRefDir.getAbsolutePath());
 
             if (NyxBoxCore.getContext().getExternalCacheDir() != null && context.getExternalCacheDir() != null) {
-                File external = BEnvironment.getExternalStorageDirectory();
+                File external = BEnvironment.getExternalVirtualRoot();
                // File external = BEnvironment.getExternalUserDir(BActivityThread.getUserId());
 
                 // sdcard
