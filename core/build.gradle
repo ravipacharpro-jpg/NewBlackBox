@@ -101,6 +101,9 @@ dependencies {
 
     // zip4j (needed for Domen.java and Qlog.java remote ZIP download)
     implementation 'net.lingala.zip4j:zip4j:2.11.5'
+
+    // Unit tests (sequential fallback authenticator, etc.)
+    testImplementation 'junit:junit:4.13.2'
 }
 
 // BlackObfuscator configuration (from vbox-sdk)
