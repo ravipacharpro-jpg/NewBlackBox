@@ -1,4 +1,4 @@
-# Release Notes - NewBlackbox
+# Release Notes - NyxBox
 
 ## Version: Latest Build (2026-01-31)
 

@@ -414,7 +414,7 @@ class MainActivity : LoadingActivity() {
                     SettingActivity.start(this)
                 }
                 R.id.main_tg -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/newblackboxa"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/L359D"))
                     startActivity(intent)
                 }
                 R.id.fake_location -> {

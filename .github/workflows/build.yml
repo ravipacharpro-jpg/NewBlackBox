@@ -36,31 +36,29 @@ jobs:
             "cmake;3.22.1"
 
       - name: Make gradlew executable
-        run: chmod +x NyxBox/gradlew
+        run: chmod +x ./gradlew
 
       - name: Fix local.properties for CI
         run: |
           export ANDROID_HOME=${ANDROID_HOME:-$HOME/Android/Sdk}
-          echo "sdk.dir=$ANDROID_HOME" > NyxBox/local.properties
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      - name: Build NyxBox Bcore AAR (release)
-        working-directory: NyxBox
+      - name: Build NyxBox Core AAR (release)
         run: ./gradlew --no-daemon :core:assembleRelease
 
       - name: Build NyxBox Loader APK (debug)
-        working-directory: NyxBox
         run: ./gradlew --no-daemon :app:assembleDebug --stacktrace
 
-      - name: Upload SDK AAR
+      - name: Upload Core AAR
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nyxbox-core-aar
-          path: NyxBox/core/build/outputs/aar/*.aar
+          path: core/build/outputs/aar/*.aar
 
       - name: Upload Loader APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nyxbox-loader-debug-apk
-          path: NyxBox/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
